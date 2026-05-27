@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enablement Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0B;
+  --bg2: #111114;
+  --bg3: #18181C;
+  --surface: #1E1E24;
+  --surface2: #25252D;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #F0EFE8;
+  --text2: #8A8990;
+  --text3: #55545C;
+  --accent: #6EE7B7;
+  --accent2: #34D399;
+  --accent-dim: rgba(110,231,183,0.12);
+  --accent-glow: rgba(110,231,183,0.25);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.12);
+  --amber: #FCD34D;
+  --amber-dim: rgba(252,211,77,0.12);
+  --blue: #93C5FD;
+  --blue-dim: rgba(147,197,253,0.12);
+  --sans: 'Noto Sans JP', sans-serif;
+  --display: 'Syne', sans-serif;
+  --r: 10px;
+  --r-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(10,10,11,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; height: 56px; padding: 0 32px; gap: 0;
+}
+.nav-logo {
+  font-family: var(--display); font-size: 15px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.01em; margin-right: 40px; display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }
+.nav-tabs { display: flex; gap: 2px; flex: 1; }
+.nav-tab {
+  padding: 6px 16px; font-size: 13px; font-weight: 400; color: var(--text2);
+  border-radius: 6px; cursor: pointer; border: none; background: none; font-family: var(--sans);
+  transition: all 0.18s; letter-spacing: 0.01em;
+}
+.nav-tab:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-tab.active { color: var(--accent); background: var(--accent-dim); font-weight: 500; }
+
+/* LAYOUT */
+.page { display: none; padding: 88px 32px 80px; max-width: 740px; margin: 0 auto; }
+.page.active { display: block; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* PAGE HEADER */
+.page-eyebrow { font-family: var(--display); font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+.page-title { font-family: var(--display); font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 8px; }
+.page-sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 36px; }
+
+/* CARDS */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 22px 24px; margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-label {
+  font-family: var(--display); font-size: 10px; font-weight: 600; color: var(--text3);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* FORM */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 7px; letter-spacing: 0.01em; }
+label .req { color: var(--red); margin-left: 2px; }
+input[type=text], textarea, select {
+  width: 100%; padding: 11px 14px; font-size: 14px; font-family: var(--sans);
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r);
+  color: var(--text); outline: none; transition: all 0.18s; line-height: 1.5;
+}
+input[type=text]::placeholder, textarea::placeholder { color: var(--text3); }
+input[type=text]:focus, textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim);
+  background: var(--bg3);
+}
+textarea { min-height: 88px; resize: vertical; }
+.err-msg { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+
+/* RATING */
+.rating-wrap { margin-bottom: 18px; }
+.rating-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 8px; letter-spacing: 0.01em; }
+.rating-title .req { color: var(--red); }
+.stars { display: flex; gap: 5px; }
+.star-btn {
+  width: 40px; height: 40px; border-radius: var(--r); border: 1px solid var(--border2);
+  background: var(--bg3); cursor: pointer; font-size: 13px; font-weight: 600;
+  color: var(--text3); display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; transition: all 0.15s;
+}
+.star-btn:hover { border-color: var(--accent); color: var(--accent); }
+.star-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.rating-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-top: 6px; letter-spacing: 0.01em; }
+
+/* PRESENTER BLOCK */
+.presenter-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 22px 24px; margin-bottom: 12px;
+  position: relative; overflow: hidden;
+}
+.presenter-block::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  opacity: 0.6;
+}
+.presenter-block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.presenter-index {
+  font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px;
+  font-size: 13px; font-weight: 500; font-family: var(--sans); border-radius: var(--r);
+  border: 1px solid transparent; cursor: pointer; transition: all 0.18s; letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent); color: #0A1A12; border-color: var(--accent); font-weight: 700;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+.btn-danger-ghost { background: transparent; color: var(--red); border-color: transparent; }
+.btn-danger-ghost:hover { background: var(--red-dim); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-full { width: 100%; justify-content: center; padding: 13px; font-size: 15px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* ADD PRESENTER */
+.add-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px; font-size: 13px; font-weight: 500; color: var(--text3);
+  background: transparent; border: 1px dashed var(--border2); border-radius: var(--r-lg);
+  cursor: pointer; transition: all 0.18s; margin-bottom: 12px; font-family: var(--sans);
+  letter-spacing: 0.02em;
+}
+.add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* SUMMARY / RESULT */
+.result-hero {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg3) 100%);
+  border: 1px solid var(--border2); border-radius: var(--r-lg);
+  padding: 28px 26px; margin-bottom: 12px; position: relative; overflow: hidden;
+}
+.result-hero::after {
+  content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.result-hero-name { font-family: var(--display); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+.result-hero-time { font-size: 13px; color: var(--text2); }
+
+.metrics-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+.metric-tile { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.metric-tile .mt-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+.metric-tile .mt-val { font-family: var(--display); font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.04em; line-height: 1; }
+.metric-tile .mt-unit { font-size: 13px; color: var(--text3); margin-left: 3px; }
+
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 130px; font-size: 12px; color: var(--text2); flex-shrink: 0; }
+.bar-track { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%); border-radius: 3px; transition: width 0.7s cubic-bezier(0.16,1,0.3,1); }
+.bar-num { font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--text); width: 18px; text-align: right; }
+
+.ai-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.ai-block-title { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+.ai-score-pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px;
+  font-family: var(--display); font-size: 14px; font-weight: 700; margin-bottom: 12px;
+}
+.pill-green { background: rgba(52,211,153,0.15); color: var(--accent); border: 1px solid rgba(52,211,153,0.3); }
+.pill-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(252,211,77,0.3); }
+.pill-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+.ai-qa-item { margin-bottom: 12px; }
+.ai-qa-q { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+.ai-qa-body { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 14px; font-size: 13px; line-height: 1.7; }
+.ai-qa-answer { color: var(--text2); margin-bottom: 6px; }
+.ai-qa-score { color: var(--accent); font-weight: 500; }
+
+.keyword-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.keyword-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.keyword-text { font-size: 14px; color: var(--text2); line-height: 1.7; background: var(--bg2); border-radius: var(--r); padding: 12px 14px; border: 1px solid var(--border); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* SEARCH */
+.search-wrap { position: relative; margin-bottom: 24px; }
+.search-wrap input { padding-left: 42px; background: var(--surface); border-color: var(--border); font-size: 15px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 16px; pointer-events: none; }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.stat-tile .st-l { font-size: 11px; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 500; margin-bottom: 5px; }
+.stat-tile .st-v { font-family: var(--display); font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; }
+.stat-tile .st-u { font-size: 12px; color: var(--text3); margin-left: 2px; }
+
+.result-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 16px 20px; margin-bottom: 8px; cursor: pointer; transition: all 0.18s;
+  display: flex; align-items: center; gap: 16px;
+}
+.result-item:hover { border-color: var(--accent); background: var(--surface2); transform: translateX(2px); }
+.result-item-avatar {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(110,231,183,0.3);
+  display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--accent); flex-shrink: 0;
+}
+.result-item-body { flex: 1; min-width: 0; }
+.result-item-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.result-item-presenter { font-size: 12px; color: var(--text2); }
+.result-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.tag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; font-family: var(--display); letter-spacing: 0.03em; }
+.tag-green { background: rgba(52,211,153,0.12); color: var(--accent); border: 1px solid rgba(52,211,153,0.2); }
+.tag-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(252,211,77,0.2); }
+.tag-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+.tag-gray { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+.score-chips { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.chip { font-family: var(--display); font-size: 11px; padding: 2px 7px; border-radius: 4px; background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
+
+/* MODAL */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  z-index: 300; display: none; align-items: center; justify-content: center; padding: 24px;
+}
+.overlay.open { display: flex; }
+.modal-box {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r-lg);
+  padding: 28px; max-width: 580px; width: 100%; max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+.modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+.modal-close { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 22px; padding: 0; line-height: 1; transition: color 0.15s; }
+.modal-close:hover { color: var(--text); }
+
+/* ADMIN */
+.q-item {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px;
+  transition: border-color 0.15s;
+}
+.q-item:hover { border-color: var(--border2); }
+.q-num { font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--accent); min-width: 24px; padding-top: 2px; }
+.q-body { flex: 1; }
+.q-text { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
+.q-answer { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 48px 20px; color: var(--text3); }
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+.empty-text { font-size: 14px; }
+.empty-sub { font-size: 12px; margin-top: 6px; color: var(--text3); opacity: 0.6; }
+
+/* LOADING */
+.loading { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); padding: 12px 0; }
+.spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><div class="nav-logo-dot"></div>Enablement Survey</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-page="form" onclick="showPage('form',this)">回答フォーム</button>
+    <button class="nav-tab" data-page="result" onclick="showPage('result',this)">マイ結果</button>
+    <button class="nav-tab" data-page="search" onclick="showPage('search',this)">検索 / 分析</button>
+    <button class="nav-tab" data-page="admin" onclick="showPage('admin',this)">管理</button>
+  </div>
+</nav>
+
+<!-- FORM -->
+<div class="page active" id="page-form">
+  <div class="page-eyebrow">Sales Enablement</div>
+  <h1 class="page-title">事例発表会<br>アンケート</h1>
+  <p class="page-sub">ご参加ありがとうございました。各発表者について評価をご記入ください。</p>
+
+  <div class="card">
+    <div class="card-label">回答者情報</div>
+    <div class="field">
+      <label>お名前（苗字 名前）<span class="req">*</span></label>
+      <input type="text" id="responderName" placeholder="山田 太郎">
+      <div class="err-msg" id="err-rname">お名前を入力してください</div>
+    </div>
+  </div>
+
+  <div id="presentersContainer"></div>
+  <button class="add-btn" id="addPresenterBtn" onclick="addPresenter()">+ 発表者を追加する</button>
+
+  <div class="card">
+    <div class="card-label">運営フィードバック</div>
+    <div class="field">
+      <label>改善点・感想（任意）</label>
+      <textarea id="opsFeedback" placeholder="運営全体についてのご意見をお聞かせください"></textarea>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-full" id="submitBtn" onclick="submitForm()">回答を送信して結果を確認する →</button>
+</div>
+
+<!-- RESULT -->
+<div class="page" id="page-result">
+  <div id="resultContent">
+    <div class="empty">
+      <div class="empty-icon">◎</div>
+      <div class="empty-text">まだ回答が送信されていません</div>
+      <div class="empty-sub">フォームから回答を送信すると、ここに結果が表示されます</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="page" id="page-search">
+  <div class="page-eyebrow">Dashboard</div>
+  <h1 class="page-title">検索・分析</h1>
+  <p class="page-sub">名前や発表者名で絞り込み。行をクリックすると詳細を確認できます。</p>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="名前・発表者名で検索..." oninput="renderSearch()">
+  </div>
+  <div class="stats-row" id="statsRow"></div>
+  <div id="searchResults"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div class="page-eyebrow">Settings</div>
+  <h1 class="page-title">管理画面</h1>
+  <p class="page-sub">理解度チェック問題と模範解答を登録します。AIが参加者の記述回答を0〜100点で自動採点します。</p>
+
+  <div class="card">
+    <div class="card-label">新しい問題を追加</div>
+    <div class="field">
+      <label>問題文<span class="req">*</span></label>
+      <input type="text" id="adminQ" placeholder="例：BANTとは何ですか？">
+    </div>
+    <div class="field">
+      <label>模範解答（AIがこれを基準に採点します）<span class="req">*</span></label>
+      <textarea id="adminA" placeholder="例：Budget・Authority・Need・Timeframeの頭文字。商談の優先度を判断するフレームワーク。" style="min-height:100px"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="addQuestion()">問題を保存する</button>
+  </div>
+
+  <div class="card">
+    <div class="card-label">登録済みの問題</div>
+    <div id="questionList"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div id="modalName" style="font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-0.02em;margin-bottom:3px"></div>
+        <div id="modalSub" style="font-size:12px;color:var(--text2)"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const RATINGS = [
+  { key: 'understanding', label: '理解度', lo: '全く理解できなかった', hi: '非常に理解しやすかった' },
+  { key: 'usefulness', label: '業務への活用度', lo: 'そう思わない', hi: 'とてもそう思う' },
+  { key: 'satisfaction', label: '全体的な満足度', lo: '不満', hi: 'とても満足' },
+  { key: 'influence', label: '行動・考え方への影響', lo: '影響なし', hi: '影響あり' },
+  { key: 'sharing', label: '他チームへの共有意向', lo: '思わない', hi: '思った' },
+  { key: 'asset', label: '情報資産として残したい', lo: '必要ない', hi: '必要' },
+];
+
+let presenters = [], nextId = 1;
+let questions = JSON.parse(localStorage.getItem('se_q') || '[]');
+let responses = JSON.parse(localStorage.getItem('se_r') || '[]');
+
+function save() {
+  localStorage.setItem('se_q', JSON.stringify(questions));
+  localStorage.setItem('se_r', JSON.stringify(responses));
+}
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'search') renderSearch();
+  if (name === 'admin') renderQuestions();
+}
+
+function addPresenter() {
+  const id = nextId++;
+  presenters.push(id);
+  renderPresenters();
+}
+function removePresenter(id) {
+  presenters = presenters.filter(p => p !== id);
+  renderPresenters();
+}
+
+function renderPresenters() {
+  const c = document.getElementById('presentersContainer');
+  c.innerHTML = '';
+  presenters.forEach((id, idx) => {
+    const qHTML = questions.map((q, qi) => `
+      <div class="field">
+        <label>Q${qi+1}. ${q.q}<span class="req">*</span></label>
+        <textarea id="qa-${id}-${qi}" placeholder="あなたの考えを記入してください..."></textarea>
+        <div class="err-msg" id="err-qa-${id}-${qi}">回答を入力してください</div>
+      </div>`).join('');
+    const rHTML = RATINGS.map(r => `
+      <div class="rating-wrap">
+        <div class="rating-title">${r.label}<span class="req">*</span></div>
+        <div class="stars" id="stars-${id}-${r.key}" data-val="0">
+          ${[1,2,3,4,5].map(n=>`<button class="star-btn" onclick="setRating(${id},'${r.key}',${n})">${n}</button>`).join('')}
+        </div>
+        <div class="rating-ends"><span>${r.lo}</span><span>${r.hi}</span></div>
+        <div class="err-msg" id="err-${id}-${r.key}">評価を選択してください</div>
+      </div>`).join('');
+    const div = document.createElement('div');
+    div.className = 'presenter-block';
+    div.id = 'pb-' + id;
+    div.innerHTML = `
+      <div class="presenter-block-header">
+        <span class="presenter-index">Presenter ${idx+1}</span>
+        ${presenters.length > 1 ? `<button class="btn btn-danger-ghost btn-sm" onclick="removePresenter(${id})">削除</button>` : ''}
+      </div>
+      <div class="field">
+        <label>発表者のお名前<span class="req">*</span></label>
+        <input type="text" id="pname-${id}" placeholder="鈴木 花子">
+        <div class="err-msg" id="err-pname-${id}">発表者名を入力してください</div>
+      </div>
+      ${rHTML}${qHTML}
+      <div class="field">
+        <label>印象に残った事例やキーワード<span class="req">*</span></label>
+        <textarea id="keyword-${id}" placeholder="印象に残った点をご記入ください"></textarea>
+        <div class="err-msg" id="err-keyword-${id}">入力してください</div>
+      </div>`;
+    c.appendChild(div);
+  });
+  document.getElementById('addPresenterBtn').style.display = presenters.length >= 5 ? 'none' : 'flex';
+}
+
+function setRating(pid, key, val) {
+  const c = document.getElementById(`stars-${pid}-${key}`);
+  c.dataset.val = val;
+  c.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < val));
+  const e = document.getElementById(`err-${pid}-${key}`);
+  if(e) e.style.display = 'none';
+}
+
+async function submitForm() {
+  let valid = true;
+  const name = document.getElementById('responderName').value.trim();
+  const ne = document.getElementById('err-rname');
+  if (!name) { ne.style.display = 'block'; valid = false; } else ne.style.display = 'none';
+  if (!presenters.length) { alert('発表者を1名以上追加してください。'); return; }
+
+  const pdList = [];
+  presenters.forEach(id => {
+    const pname = document.getElementById(`pname-${id}`).value.trim();
+    const pe = document.getElementById(`err-pname-${id}`);
+    if (!pname) { pe.style.display = 'block'; valid = false; } else pe.style.display = 'none';
+    const ratings = {};
+    RATINGS.forEach(r => {
+      const v = parseInt(document.getElementById(`stars-${id}-${r.key}`).dataset.val);
+      const e = document.getElementById(`err-${id}-${r.key}`);
+      if (!v) { e.style.display = 'block'; valid = false; } else e.style.display = 'none';
+      ratings[r.key] = v;
+    });
+    const qAnswers = questions.map((q, qi) => {
+      const el = document.getElementById(`qa-${id}-${qi}`);
+      const ans = el ? el.value.trim() : '';
+      const e = document.getElementById(`err-qa-${id}-${qi}`);
+      if (!ans && questions.length) { if(e) { e.style.display = 'block'; valid = false; } }
+      else { if(e) e.style.display = 'none'; }
+      return { q: q.q, answer: ans, modelAnswer: q.a };
+    });
+    const keyword = document.getElementById(`keyword-${id}`).value.trim();
+    const ke = document.getElementById(`err-keyword-${id}`);
+    if (!keyword) { ke.style.display = 'block'; valid = false; } else ke.style.display = 'none';
+    pdList.push({ pname, ratings, qAnswers, keyword });
+  });
+
+  if (!valid) { window.scrollTo({top:0,behavior:'smooth'}); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> AI採点中...';
+
+  for (const pd of pdList) {
+    if (pd.qAnswers.length) pd.aiScores = await scoreWithAI(pd.qAnswers);
+  }
+
+  const resp = {
+    id: Date.now(), responder: name,
+    timestamp: new Date().toISOString(),
+    presenters: pdList,
+    opsFeedback: document.getElementById('opsFeedback').value.trim()
+  };
+  responses.push(resp);
+  save();
+
+  btn.disabled = false;
+  btn.textContent = '回答を送信して結果を確認する →';
+
+  showResultPage(resp);
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===1));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-result').classList.add('active');
+  window.scrollTo({top:0});
+}
+
+async function scoreWithAI(qAnswers) {
+  const scores = [];
+  for (const qa of qAnswers) {
+    if (!qa.answer) { scores.push({score:0,feedback:'未回答'}); continue; }
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 200,
+          messages: [{role:'user', content:`採点者として、問題・模範解答・受講者の回答を見て理解度を0〜100点で採点し、短いフィードバックを日本語で返してください。JSON形式のみで返答：{"score": 数値, "feedback": "フィードバック"}\n問題：${qa.q}\n模範解答：${qa.modelAnswer}\n受講者の回答：${qa.answer}`}]
+        })
+      });
+      const d = await res.json();
+      const text = d.content?.[0]?.text || '{"score":0,"feedback":"エラー"}';
+      scores.push(JSON.parse(text.replace(/```json|```/g,'').trim()));
+    } catch { scores.push({score:50,feedback:'採点エラー'}); }
+  }
+  return scores;
+}
+
+function showResultPage(resp) {
+  const el = document.getElementById('resultContent');
+  let html = `
+    <div class="result-hero">
+      <div class="result-hero-name">${resp.responder}</div>
+      <div class="result-hero-time">${new Date(resp.timestamp).toLocaleString('ja-JP')} に送信</div>
+    </div>`;
+  resp.presenters.forEach((pd, i) => {
+    const total = Object.values(pd.ratings).reduce((a,b)=>a+b,0);
+    const avg = (total/RATINGS.length).toFixed(1);
+    let aiH = '';
+    if (pd.aiScores?.length) {
+      const avg = Math.round(pd.aiScores.reduce((a,b)=>a+b.score,0)/pd.aiScores.length);
+      const cls = avg>=70?'pill-green':avg>=40?'pill-amber':'pill-red';
+      const lbl = avg>=70?'理解度：高':avg>=40?'理解度：中':'要復習';
+      aiH = `<div class="ai-block">
+        <div class="ai-block-title">AI 理解度採点</div>
+        <span class="ai-score-pill ${cls}">${avg}点 — ${lbl}</span>
+        ${pd.aiScores.map((s,qi)=>`
+          <div class="ai-qa-item">
+            <div class="ai-qa-q">Q${qi+1}. ${pd.qAnswers[qi].q}</div>
+            <div class="ai-qa-body">
+              <div class="ai-qa-answer">回答：${pd.qAnswers[qi].answer}</div>
+              <div class="ai-qa-score">${s.score}点 — ${s.feedback}</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    }
+    html += `
+      <div class="card">
+        <div class="card-label">Presenter ${i+1} — ${pd.pname}</div>
+        <div class="metrics-row">
+          <div class="metric-tile"><div class="mt-label">総合スコア</div><div><span class="mt-val">${total}</span><span class="mt-unit">/ 30</span></div></div>
+          <div class="metric-tile"><div class="mt-label">平均評価</div><div><span class="mt-val">${avg}</span><span class="mt-unit">/ 5.0</span></div></div>
+        </div>
+        ${RATINGS.map(r=>`<div class="bar-row"><span class="bar-label">${r.label}</span><div class="bar-track"><div class="bar-fill" style="width:${pd.ratings[r.key]*20}%"></div></div><span class="bar-num">${pd.ratings[r.key]}</span></div>`).join('')}
+        ${aiH}
+        <div class="keyword-block">
+          <div class="keyword-label">印象に残ったキーワード</div>
+          <div class="keyword-text">${pd.keyword}</div>
+        </div>
+      </div>`;
+  });
+  if (resp.opsFeedback) html += `<div class="card"><div class="card-label">運営フィードバック</div><div class="keyword-text">${resp.opsFeedback}</div></div>`;
+  html += `<button class="btn btn-ghost btn-full" onclick="resetForm()" style="margin-top:8px">← 新しい回答を入力する</button>`;
+  el.innerHTML = html;
+}
+
+function resetForm() {
+  document.getElementById('responderName').value = '';
+  document.getElementById('opsFeedback').value = '';
+  presenters = []; nextId = 1;
+  renderPresenters(); addPresenter();
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-form').classList.add('active');
+  window.scrollTo({top:0});
+}
+
+function renderSearch() {
+  const q = (document.getElementById('searchInput')?.value||'').toLowerCase();
+  const flat = responses.flatMap(r=>r.presenters.map(pd=>({...pd,responder:r.responder,timestamp:r.timestamp,rid:r.id})));
+  const filtered = flat.filter(i=>!q||i.responder.toLowerCase().includes(q)||i.pname.toLowerCase().includes(q));
+
+  const statsEl = document.getElementById('statsRow');
+  if (responses.length) {
+    const all = responses.flatMap(r=>r.presenters);
+    const avgT = (all.reduce((a,b)=>a+Object.values(b.ratings).reduce((x,y)=>x+y,0),0)/all.length).toFixed(1);
+    const aiItems = all.filter(i=>i.aiScores?.length);
+    const avgAI = aiItems.length ? Math.round(aiItems.reduce((a,b)=>a+b.aiScores.reduce((x,y)=>x+y.score,0)/b.aiScores.length,0)/aiItems.length) : null;
+    statsEl.innerHTML = `
+      <div class="stat-tile"><div class="st-l">総回答数</div><div><span class="st-v">${responses.length}</span><span class="st-u">件</span></div></div>
+      <div class="stat-tile"><div class="st-l">平均スコア</div><div><span class="st-v">${avgT}</span><span class="st-u">/ 30</span></div></div>
+      <div class="stat-tile"><div class="st-l">平均AI理解度</div><div><span class="st-v">${avgAI!==null?avgAI:'—'}</span><span class="st-u">${avgAI!==null?'点':''}</span></div></div>`;
+  } else statsEl.innerHTML = '';
+
+  const el = document.getElementById('searchResults');
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◎</div><div class="empty-text">${responses.length?'該当する回答が見つかりません':'まだ回答データがありません'}</div></div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(item=>{
+    const total = Object.values(item.ratings).reduce((a,b)=>a+b,0);
+    const aiAvg = item.aiScores?.length ? Math.round(item.aiScores.reduce((a,b)=>a+b.score,0)/item.aiScores.length) : null;
+    const initials = item.responder.replace(/ /g,'').slice(0,2);
+    const tagClass = aiAvg===null?'tag-gray':aiAvg>=70?'tag-green':aiAvg>=40?'tag-amber':'tag-red';
+    const tagLabel = aiAvg===null?'未採点':aiAvg>=70?'高':aiAvg>=40?'中':'要復習';
+    return `
+      <div class="result-item" onclick="openDetail(${item.rid},'${item.pname.replace(/'/g,"\\'")}')">
+        <div class="result-item-avatar">${initials}</div>
+        <div class="result-item-body">
+          <div class="result-item-name">${item.responder}</div>
+          <div class="result-item-presenter">発表者：${item.pname}</div>
+        </div>
+        <div class="result-item-right">
+          <span class="tag ${tagClass}">${aiAvg!==null?`AI ${aiAvg}点 — `:``}${tagLabel}</span>
+          <div class="score-chips">
+            <span class="chip">計 ${total}/30</span>
+            <span class="chip">${new Date(item.timestamp).toLocaleDateString('ja-JP')}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openDetail(rid, pname) {
+  const resp = responses.find(r=>r.id===rid);
+  const pd = resp?.presenters.find(p=>p.pname===pname);
+  if (!pd) return;
+  const total = Object.values(pd.ratings).reduce((a,b)=>a+b,0);
+  let aiH = '';
+  if (pd.aiScores?.length) {
+    const avg = Math.round(pd.aiScores.reduce((a,b)=>a+b.score,0)/pd.aiScores.length);
+    const cls = avg>=70?'pill-green':avg>=40?'pill-amber':'pill-red';
+    const lbl = avg>=70?'理解度：高':avg>=40?'理解度：中':'要復習';
+    aiH = `<div class="ai-block">
+      <div class="ai-block-title">AI 理解度採点</div>
+      <span class="ai-score-pill ${cls}">${avg}点 — ${lbl}</span>
+      ${pd.aiScores.map((s,i)=>`
+        <div class="ai-qa-item">
+          <div class="ai-qa-q">Q${i+1}. ${pd.qAnswers[i].q}</div>
+          <div class="ai-qa-body">
+            <div class="ai-qa-answer">回答：${pd.qAnswers[i].answer}</div>
+            <div class="ai-qa-score">${s.score}点 — ${s.feedback}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('modalName').textContent = resp.responder;
+  document.getElementById('modalSub').textContent = `発表者：${pd.pname} ／ ${new Date(resp.timestamp).toLocaleString('ja-JP')}`;
+  document.getElementById('modalContent').innerHTML = `
+    <div class="metrics-row">
+      <div class="metric-tile"><div class="mt-label">総合スコア</div><div><span class="mt-val">${total}</span><span class="mt-unit">/30</span></div></div>
+      <div class="metric-tile"><div class="mt-label">平均評価</div><div><span class="mt-val">${(total/RATINGS.length).toFixed(1)}</span><span class="mt-unit">/5</span></div></div>
+    </div>
+    ${RATINGS.map(r=>`<div class="bar-row"><span class="bar-label">${r.label}</span><div class="bar-track"><div class="bar-fill" style="width:${pd.ratings[r.key]*20}%"></div></div><span class="bar-num">${pd.ratings[r.key]}</span></div>`).join('')}
+    ${aiH}
+    <div class="keyword-block">
+      <div class="keyword-label">印象に残ったキーワード</div>
+      <div class="keyword-text">${pd.keyword}</div>
+    </div>
+    ${resp.opsFeedback?`<div class="keyword-block"><div class="keyword-label">運営フィードバック</div><div class="keyword-text">${resp.opsFeedback}</div></div>`:''}`;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('detailOverlay').classList.remove('open'); }
+document.getElementById('detailOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+function addQuestion() {
+  const q = document.getElementById('adminQ').value.trim();
+  const a = document.getElementById('adminA').value.trim();
+  if (!q||!a) { alert('問題文と模範解答を入力してください。'); return; }
+  questions.push({q,a,id:Date.now()});
+  save();
+  document.getElementById('adminQ').value = '';
+  document.getElementById('adminA').value = '';
+  renderQuestions();
+  renderPresenters();
+}
+function removeQuestion(id) {
+  questions = questions.filter(q=>q.id!==id);
+  save(); renderQuestions(); renderPresenters();
+}
+function renderQuestions() {
+  const el = document.getElementById('questionList');
+  if (!questions.length) { el.innerHTML = '<div class="empty" style="padding:16px 0"><div class="empty-text">問題が登録されていません</div></div>'; return; }
+  el.innerHTML = questions.map((q,i)=>`
+    <div class="q-item">
+      <span class="q-num">Q${i+1}</span>
+      <div class="q-body">
+        <div class="q-text">${q.q}</div>
+        <div class="q-answer">模範解答：${q.a}</div>
+      </div>
+      <button class="btn btn-danger-ghost btn-sm" onclick="removeQuestion(${q.id})">削除</button>
+    </div>`).join('');
+}
+
+addPresenter();
+renderQuestions();
+</script>
+</body>
+</html>
